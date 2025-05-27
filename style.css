@@ -1,66 +1,76 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  padding: 20px;
+const form = document.getElementById('form');
+const tableau = document.querySelector('#tableau tbody');
+const filtre = document.getElementById('filtreStatut');
+const inputEntreprise = document.getElementById('entreprise');
+const inputStatut = document.getElementById('statut');
+const inputEditIndex = document.getElementById('editIndex');
+
+let candidatures = JSON.parse(localStorage.getItem('candidatures')) || [];
+
+function enregistrer() {
+  localStorage.setItem('candidatures', JSON.stringify(candidatures));
 }
 
-.container {
-  max-width: 700px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px #ccc;
+function afficherCandidatures() {
+  tableau.innerHTML = '';
+  const statutFiltre = filtre.value;
+
+  candidatures.forEach((c, index) => {
+    if (statutFiltre === 'Tous' || c.statut === statutFiltre) {
+      const ligne = document.createElement('tr');
+      ligne.innerHTML = `
+        <td>${c.entreprise}</td>
+        <td>${c.statut}</td>
+        <td>${c.date}</td>
+        <td>
+          <button class="edit" data-index="${index}">Modifier</button>
+          <button class="delete" data-index="${index}">Supprimer</button>
+        </td>
+      `;
+      tableau.appendChild(ligne);
+    }
+  });
 }
 
-h1, h2 {
-  color: #333;
-}
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  const entreprise = inputEntreprise.value.trim();
+  const statut = inputStatut.value;
+  const now = new Date().toLocaleString();
 
-form, .filtre {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
+  if (entreprise) {
+    const index = inputEditIndex.value;
 
-form input, form select, .filtre select {
-  flex: 1;
-  padding: 8px;
-}
+    if (index === "") {
+      candidatures.push({ entreprise, statut, date: now });
+    } else {
+      candidatures[index] = { entreprise, statut, date: now };
+    }
 
-form button {
-  padding: 8px 16px;
-  background: #0077cc;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+    enregistrer();
+    afficherCandidatures();
+    form.reset();
+    inputEditIndex.value = "";
+  }
+});
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+tableau.addEventListener('click', function (e) {
+  const index = e.target.getAttribute('data-index');
 
-th, td {
-  text-align: left;
-  padding: 8px;
-  border-bottom: 1px solid #ddd;
-}
+  if (e.target.classList.contains('delete')) {
+    candidatures.splice(index, 1);
+    enregistrer();
+    afficherCandidatures();
+  }
 
-button.delete {
-  background: crimson;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-}
+  if (e.target.classList.contains('edit')) {
+    const c = candidatures[index];
+    inputEntreprise.value = c.entreprise;
+    inputStatut.value = c.statut;
+    inputEditIndex.value = index;
+  }
+});
 
-button.edit {
-  background: #ffaa00;
-  color: black;
-  border: none;
-  padding: 5px 10px;
-  margin-right: 5px;
-  cursor: pointer;
-}
+filtre.addEventListener('change', afficherCandidatures);
+
+afficherCandidatures();
