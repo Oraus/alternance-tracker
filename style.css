@@ -1,128 +1,74 @@
 body {
-  font-family: 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
   background-color: #0d1117;
   color: #c9d1d9;
-  padding: 20px;
-}
-
-.container {
-  max-width: 750px;
-  margin: auto;
-  background: #161b22;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
-}
-
-h1, h2 {
-  color: #ffffff;
-  margin-bottom: 10px;
-}
-
-form, .filtre {
+  font-family: 'Segoe UI', sans-serif;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  flex-direction: row;
+  height: 100vh;
+  overflow: hidden;
 }
 
-form input, form select, .filtre input, .filtre select {
-  flex: 1;
-  padding: 10px;
-  background-color: #0d1117;
-  color: #c9d1d9;
-  border: 1px solid #30363d;
-  border-radius: 6px;
+.colonne {
+  padding: 20px;
+  overflow-y: auto;
 }
 
-form button, button.edit, button.delete, #traceCercle {
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
+.gauche {
+  width: 50%;
+  background-color: #161b22;
 }
 
-form button {
-  background-color: #238636;
-  color: white;
+.droite {
+  width: 50%;
+  background-color: #1e2228;
+  border-left: 1px solid #30363d;
 }
 
-form button:hover {
-  background-color: #2ea043;
-}
-
-button.delete {
-  background-color: #da3633;
-  color: white;
-}
-
-button.delete:hover {
-  background-color: #f85149;
-}
-
-button.edit {
-  background-color: #d29922;
-  color: black;
-}
-
-button.edit:hover {
-  background-color: #e3b341;
-}
-
-#traceCercle {
-  background-color: #0366d6;
-  color: white;
-}
-
-#traceCercle:hover {
-  background-color: #218bff;
+h2 {
+  color: #58a6ff;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #0d1117;
 }
 
 th, td {
   text-align: left;
-  padding: 10px;
+  padding: 8px;
   border-bottom: 1px solid #30363d;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
 }
 
-th {
-  background-color: #161b22;
-  color: #c9d1d9;
-}
-
-#map {
-  width: 100%;
-  height: 400px;
-  margin-top: 20px;
+.aide-item {
+  margin-bottom: 10px;
+  padding: 10px;
   border: 1px solid #30363d;
   border-radius: 8px;
+  background-color: #0d1117;
 }
 
-.zone-domicile {
-  margin-top: 30px;
-  padding: 16px;
+.aide-item strong {
+  color: #ffffff;
+}
+
+input, select, button {
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 6px;
   border: 1px solid #30363d;
-  border-radius: 10px;
-  background-color: #1e2228;
+  background-color: #0d1117;
+  color: #c9d1d9;
+  width: 100%;
 }
 
-.zone-domicile h2 {
-  font-size: 18px;
-  color: #58a6ff;
-  margin-bottom: 8px;
+button {
+  background-color: #238636;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-.zone-domicile p {
-  font-size: 13px;
-  color: #8b949e;
-  margin-bottom: 10px;
+button:hover {
+  background-color: #2ea043;
 }
