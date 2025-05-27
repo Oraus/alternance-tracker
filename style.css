@@ -1,13 +1,12 @@
-/* Police terminal */
+/* Police claire, moderne, lisible */
 body {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Segoe UI', Roboto, sans-serif;
   background-color: #0d1117;
   color: #c9d1d9;
   padding: 20px;
   animation: fadeInBody 0.5s ease-in;
 }
 
-/* Conteneur */
 .container {
   max-width: 750px;
   margin: auto;
@@ -41,7 +40,7 @@ form input, form select, .filtre select {
   border-radius: 6px;
 }
 
-form button, button.edit, button.delete, .filtre button {
+form button, button.edit, button.delete {
   padding: 8px 14px;
   border-radius: 6px;
   font-weight: bold;
@@ -89,6 +88,8 @@ th, td {
   text-align: left;
   padding: 10px;
   border-bottom: 1px solid #30363d;
+  font-family: 'Courier New', monospace; /* monospace juste pour données */
+  font-size: 14px;
 }
 
 th {
