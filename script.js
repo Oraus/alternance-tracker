@@ -80,8 +80,7 @@ function geocoderEtAjouterMarqueur(index) {
         map.setView([c.lat, c.lon], 13);
         enregistrer();
       }
-    })
-    .catch(err => console.error("Erreur géocodage :", err));
+    });
 }
 
 form.addEventListener('submit', function (e) {
@@ -146,11 +145,11 @@ boutonAnnuler.addEventListener('click', () => {
 });
 
 filtre.addEventListener('change', afficherCandidatures);
-
 afficherCandidatures();
 afficherMarqueurs();
+chargerZoneDepuisLocalStorage(); // ← zone rechargée ici
 
-// Cercle autour du domicile
+// === Cercle autour du domicile ===
 const boutonCercle = document.getElementById('traceCercle');
 let cercleDomicile = null;
 
@@ -162,6 +161,8 @@ boutonCercle.addEventListener('click', () => {
     alert("Merci d'entrer une adresse et un rayon valide.");
     return;
   }
+
+  localStorage.setItem("zoneDomicile", JSON.stringify({ adresse, rayonKm }));
 
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`)
     .then(res => res.json())
@@ -181,9 +182,33 @@ boutonCercle.addEventListener('click', () => {
         }).addTo(map);
 
         map.setView([lat, lon], 12);
-      } else {
-        alert("Adresse non trouvée.");
       }
-    })
-    .catch(err => console.error("Erreur géocodage domicile :", err));
+    });
 });
+
+// ✅ Restauration automatique de la zone
+function chargerZoneDepuisLocalStorage() {
+  const zone = JSON.parse(localStorage.getItem("zoneDomicile"));
+  if (!zone) return;
+
+  const { adresse, rayonKm } = zone;
+  document.getElementById('domicile').value = adresse;
+  document.getElementById('rayon').value = rayonKm;
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data[0]) {
+        const { lat, lon } = data[0];
+
+        cercleDomicile = L.circle([lat, lon], {
+          radius: rayonKm * 1000,
+          color: 'deepskyblue',
+          fillColor: 'skyblue',
+          fillOpacity: 0.2
+        }).addTo(map);
+
+        map.setView([lat, lon], 12);
+      }
+    });
+}
