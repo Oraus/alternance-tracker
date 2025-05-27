@@ -1,10 +1,13 @@
+/* Police terminal */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   background-color: #0d1117;
   color: #c9d1d9;
   padding: 20px;
+  animation: fadeInBody 0.5s ease-in;
 }
 
+/* Conteneur */
 .container {
   max-width: 750px;
   margin: auto;
@@ -12,10 +15,13 @@ body {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+  animation: fadeIn 0.8s ease-in-out;
 }
 
 h1, h2 {
   color: #ffffff;
+  margin-bottom: 10px;
+  animation: fadeInTitle 1s ease-in;
 }
 
 form, .filtre {
@@ -23,6 +29,7 @@ form, .filtre {
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
+  animation: fadeIn 1s ease-in-out;
 }
 
 form input, form select, .filtre select {
@@ -70,10 +77,12 @@ button.edit:hover {
   background-color: #e3b341;
 }
 
+/* Tableau */
 table {
   width: 100%;
   border-collapse: collapse;
   background: #0d1117;
+  animation: fadeIn 0.6s ease-in;
 }
 
 th, td {
@@ -87,10 +96,28 @@ th {
   color: #c9d1d9;
 }
 
+/* Carte */
 #map {
   width: 100%;
   height: 400px;
   margin-top: 20px;
   border: 1px solid #30363d;
   border-radius: 8px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInTitle {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInBody {
+  from { opacity: 0; background-color: #000; }
+  to { opacity: 1; background-color: #0d1117; }
 }
