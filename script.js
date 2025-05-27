@@ -16,7 +16,6 @@ function afficherCandidatures() {
       const ligne = document.createElement('tr');
       ligne.innerHTML = `
         <td>${candidature.entreprise}</td>
-        <td>${candidature.poste}</td>
         <td>${candidature.statut}</td>
         <td><button class="delete" data-index="${index}">Supprimer</button></td>
       `;
@@ -28,11 +27,10 @@ function afficherCandidatures() {
 form.addEventListener('submit', function (e) {
   e.preventDefault();
   const entreprise = document.getElementById('entreprise').value.trim();
-  const poste = document.getElementById('poste').value.trim();
   const statut = document.getElementById('statut').value;
 
-  if (entreprise && poste) {
-    candidatures.push({ entreprise, poste, statut });
+  if (entreprise) {
+    candidatures.push({ entreprise, statut });
     enregistrer();
     afficherCandidatures();
     form.reset();
