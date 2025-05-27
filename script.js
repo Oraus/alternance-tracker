@@ -16,17 +16,23 @@ form.appendChild(boutonAnnuler);
 let candidatures = JSON.parse(localStorage.getItem('candidatures')) || [];
 let marqueurs = JSON.parse(localStorage.getItem('marqueurs')) || [];
 
-// Initialiser la carte
 const map = L.map('map').setView([48.8566, 2.3522], 11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Afficher les anciens marqueurs
-marqueurs.forEach(({ entreprise, lat, lon, adresse }) => {
-  L.marker([lat, lon]).addTo(map)
-    .bindPopup(`<strong>${entreprise}</strong><br>${adresse}`);
-});
+// 🔁 Marqueurs persistants
+function afficherMarqueurs() {
+  marqueurs.forEach(({ entreprise, lat, lon, adresse }) => {
+    L.marker([lat, lon]).addTo(map)
+      .bindPopup(`<strong>${entreprise}</strong><br>${adresse}`);
+  });
+
+  if (marqueurs.length > 0) {
+    const last = marqueurs[marqueurs.length - 1];
+    map.setView([last.lat, last.lon], 13);
+  }
+}
 
 function enregistrer() {
   localStorage.setItem('candidatures', JSON.stringify(candidatures));
@@ -93,7 +99,7 @@ tableau.addEventListener('click', function (e) {
     marqueurs.splice(index, 1);
     enregistrer();
     afficherCandidatures();
-    location.reload(); // recharge les marqueurs
+    location.reload(); // recharge la carte avec les bons marqueurs
   }
 
   if (e.target.classList.contains('edit')) {
@@ -117,6 +123,7 @@ boutonAnnuler.addEventListener('click', () => {
 filtre.addEventListener('change', afficherCandidatures);
 
 afficherCandidatures();
+afficherMarqueurs();
 
 function geocoder(entreprise, adresse) {
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`)
