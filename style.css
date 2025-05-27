@@ -106,3 +106,23 @@ th {
   border: 1px solid #30363d;
   border-radius: 8px;
 }
+
+.zone-domicile {
+  margin-top: 30px;
+  padding: 16px;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  background-color: #1e2228;
+}
+
+.zone-domicile h2 {
+  font-size: 18px;
+  color: #58a6ff;
+  margin-bottom: 8px;
+}
+
+.zone-domicile p {
+  font-size: 13px;
+  color: #8b949e;
+  margin-bottom: 10px;
+}
