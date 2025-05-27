@@ -4,6 +4,14 @@ const filtre = document.getElementById('filtreStatut');
 const inputEntreprise = document.getElementById('entreprise');
 const inputStatut = document.getElementById('statut');
 const inputEditIndex = document.getElementById('editIndex');
+const boutonSubmit = form.querySelector('button[type="submit"]');
+
+// Créer bouton Annuler (ajout dynamique)
+const boutonAnnuler = document.createElement("button");
+boutonAnnuler.textContent = "Annuler";
+boutonAnnuler.type = "button";
+boutonAnnuler.style.display = "none";
+form.appendChild(boutonAnnuler);
 
 let candidatures = JSON.parse(localStorage.getItem('candidatures')) || [];
 
@@ -16,10 +24,9 @@ function afficherCandidatures() {
   const statutFiltre = filtre.value;
 
   candidatures.forEach((c, index) => {
-    // Correction : si aucune date, en générer une maintenant
     if (!c.date) {
       c.date = new Date().toLocaleString();
-      enregistrer(); // mettre à jour localStorage
+      enregistrer();
     }
 
     if (statutFiltre === 'Tous' || c.statut === statutFiltre) {
@@ -57,6 +64,8 @@ form.addEventListener('submit', function (e) {
     afficherCandidatures();
     form.reset();
     inputEditIndex.value = "";
+    boutonSubmit.textContent = "Ajouter";
+    boutonAnnuler.style.display = "none";
   }
 });
 
@@ -74,7 +83,17 @@ tableau.addEventListener('click', function (e) {
     inputEntreprise.value = c.entreprise;
     inputStatut.value = c.statut;
     inputEditIndex.value = index;
+    boutonSubmit.textContent = "Mettre à jour";
+    boutonAnnuler.style.display = "inline-block";
   }
+});
+
+// Gestion bouton Annuler
+boutonAnnuler.addEventListener('click', () => {
+  form.reset();
+  inputEditIndex.value = "";
+  boutonSubmit.textContent = "Ajouter";
+  boutonAnnuler.style.display = "none";
 });
 
 filtre.addEventListener('change', afficherCandidatures);
