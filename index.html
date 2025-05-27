@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suivi Alternance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>📋 Suivi de mes candidatures</h1>
+    <form id="form">
+      <input type="text" id="entreprise" placeholder="Nom de l'entreprise" required />
+      <input type="text" id="poste" placeholder="Poste visé" required />
+      <select id="statut">
+        <option value="Envoyé">Envoyé</option>
+        <option value="Relancé">Relancé</option>
+        <option value="Entretien">Entretien</option>
+        <option value="Refusé">Refusé</option>
+      </select>
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <div class="filtre">
+      <label for="filtreStatut">Filtrer par statut :</label>
+      <select id="filtreStatut">
+        <option value="Tous">Tous</option>
+        <option value="Envoyé">Envoyé</option>
+        <option value="Relancé">Relancé</option>
+        <option value="Entretien">Entretien</option>
+        <option value="Refusé">Refusé</option>
+      </select>
+    </div>
+
+    <h2>🔎 Mes candidatures</h2>
+    <table id="tableau">
+      <thead>
+        <tr>
+          <th>Entreprise</th>
+          <th>Poste</th>
+          <th>Statut</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

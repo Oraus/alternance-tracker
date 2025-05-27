@@ -1,0 +1,57 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  padding: 20px;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #ccc;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+form, .filtre {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+form input, form select, .filtre select {
+  flex: 1;
+  padding: 8px;
+}
+
+form button {
+  padding: 8px 16px;
+  background: #0077cc;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+button.delete {
+  background: crimson;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
