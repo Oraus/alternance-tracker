@@ -1,10 +1,20 @@
-// script.js complet avec sauvegarde locale, modification et affichage
+// script.js complet avec carte Leaflet, sauvegarde locale, modification, affichage et aide
 
 const entreprises = [
   { nom: "Entreprise A", secteur: "Informatique", salaries: 120, lat: 48.860, lon: 2.340 },
   { nom: "Entreprise B", secteur: "Ingénierie", salaries: 50, lat: 48.853, lon: 2.370 },
   { nom: "Entreprise C", secteur: "Marketing", salaries: 30, lat: 48.870, lon: 2.310 }
 ];
+
+let map = L.map(document.createElement('div')); // provisoire si carte absente
+if (document.getElementById('map')) {
+  map = L.map('map').setView([48.8566, 2.3522], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+}
+
+let cercleDomicile = null;
 
 function toRadians(deg) {
   return deg * Math.PI / 180;
@@ -29,12 +39,24 @@ document.getElementById("traceCercle").addEventListener("click", () => {
   const rayonKm = parseFloat(document.getElementById("rayon").value);
   if (!adresse || isNaN(rayonKm)) return;
 
+  localStorage.setItem("zoneDomicile", JSON.stringify({ adresse, rayonKm }));
+
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`)
     .then(res => res.json())
     .then(data => {
       if (data && data[0]) {
         const latUser = parseFloat(data[0].lat);
         const lonUser = parseFloat(data[0].lon);
+
+        if (cercleDomicile) map.removeLayer(cercleDomicile);
+        cercleDomicile = L.circle([latUser, lonUser], {
+          radius: rayonKm * 1000,
+          color: 'deepskyblue',
+          fillColor: 'skyblue',
+          fillOpacity: 0.2
+        }).addTo(map);
+        map.setView([latUser, lonUser], 12);
+
         const container = document.getElementById("resultatsAide");
         container.innerHTML = "";
         entreprises.forEach(ent => {
@@ -104,4 +126,13 @@ function supprimer(i) {
   }
 }
 
+function chargerZoneDepuisLocalStorage() {
+  const zone = JSON.parse(localStorage.getItem("zoneDomicile"));
+  if (!zone) return;
+  document.getElementById("domicile").value = zone.adresse;
+  document.getElementById("rayon").value = zone.rayonKm;
+  document.getElementById("traceCercle").click();
+}
+
 afficherCandidatures();
+chargerZoneDepuisLocalStorage();
