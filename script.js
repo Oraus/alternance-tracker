@@ -6,7 +6,7 @@ const inputStatut = document.getElementById('statut');
 const inputEditIndex = document.getElementById('editIndex');
 const boutonSubmit = form.querySelector('button[type="submit"]');
 
-// Créer bouton Annuler (ajout dynamique)
+// Créer bouton Annuler
 const boutonAnnuler = document.createElement("button");
 boutonAnnuler.textContent = "Annuler";
 boutonAnnuler.type = "button";
@@ -56,6 +56,7 @@ form.addEventListener('submit', function (e) {
 
     if (index === "") {
       candidatures.push({ entreprise, statut, date: now });
+      ajouterMarqueur(entreprise);
     } else {
       candidatures[index] = { entreprise, statut, date: now };
     }
@@ -88,7 +89,6 @@ tableau.addEventListener('click', function (e) {
   }
 });
 
-// Gestion bouton Annuler
 boutonAnnuler.addEventListener('click', () => {
   form.reset();
   inputEditIndex.value = "";
@@ -99,3 +99,31 @@ boutonAnnuler.addEventListener('click', () => {
 filtre.addEventListener('change', afficherCandidatures);
 
 afficherCandidatures();
+
+
+// =======================
+// Carte Leaflet
+// =======================
+
+const map = L.map('map').setView([48.8566, 2.3522], 11); // Paris par défaut
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+function ajouterMarqueur(entreprise) {
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(entreprise)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data[0]) {
+        const { lat, lon, display_name } = data[0];
+        L.marker([lat, lon]).addTo(map)
+          .bindPopup(`<strong>${entreprise}</strong><br>${display_name}`)
+          .openPopup();
+        map.setView([lat, lon], 13);
+      }
+    })
+    .catch(err => {
+      console.error("Erreur de géocodage :", err);
+    });
+}
