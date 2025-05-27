@@ -147,9 +147,8 @@ boutonAnnuler.addEventListener('click', () => {
 filtre.addEventListener('change', afficherCandidatures);
 afficherCandidatures();
 afficherMarqueurs();
-chargerZoneDepuisLocalStorage(); // ← zone rechargée ici
+chargerZoneDepuisLocalStorage();
 
-// === Cercle autour du domicile ===
 const boutonCercle = document.getElementById('traceCercle');
 let cercleDomicile = null;
 
@@ -186,7 +185,6 @@ boutonCercle.addEventListener('click', () => {
     });
 });
 
-// ✅ Restauration automatique de la zone
 function chargerZoneDepuisLocalStorage() {
   const zone = JSON.parse(localStorage.getItem("zoneDomicile"));
   if (!zone) return;
