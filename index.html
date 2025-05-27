@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Suivi Alternance</title>
 
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -36,6 +35,12 @@
       </select>
     </div>
 
+    <div class="filtre">
+      <input type="text" id="domicile" placeholder="Mon adresse (ex: 15 rue Victor Hugo, Paris)" />
+      <input type="number" id="rayon" placeholder="Rayon en km" value="10" min="1" />
+      <button type="button" id="traceCercle">Tracer la zone</button>
+    </div>
+
     <h2>🔎 Mes candidatures</h2>
     <table id="tableau">
       <thead>
@@ -53,7 +58,6 @@
     <div id="map"></div>
   </div>
 
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="script.js"></script>
 </body>
