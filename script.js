@@ -1,4 +1,4 @@
-// script.js complet avec carte Leaflet, sauvegarde locale, modification, affichage et aide
+// script.js complet avec carte, sauvegarde, modification et couleurs de marqueurs
 
 const entreprises = [
   { nom: "Entreprise A", secteur: "Informatique", salaries: 120, lat: 48.860, lon: 2.340 },
@@ -6,15 +6,13 @@ const entreprises = [
   { nom: "Entreprise C", secteur: "Marketing", salaries: 30, lat: 48.870, lon: 2.310 }
 ];
 
-let map = L.map(document.createElement('div')); // provisoire si carte absente
-if (document.getElementById('map')) {
-  map = L.map('map').setView([48.8566, 2.3522], 11);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-  }).addTo(map);
-}
+let map = L.map('map').setView([48.8566, 2.3522], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
 
 let cercleDomicile = null;
+let markers = [];
 
 function toRadians(deg) {
   return deg * Math.PI / 180;
@@ -33,6 +31,11 @@ const form = document.getElementById('form');
 const tableau = document.querySelector('#tableau tbody');
 let candidatures = JSON.parse(localStorage.getItem('candidatures')) || [];
 let editIndex = null;
+
+function clearMarkers() {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+}
 
 document.getElementById("traceCercle").addEventListener("click", () => {
   const adresse = document.getElementById("domicile").value;
@@ -59,6 +62,10 @@ document.getElementById("traceCercle").addEventListener("click", () => {
 
         const container = document.getElementById("resultatsAide");
         container.innerHTML = "";
+
+        clearMarkers();
+        afficherMarqueursCandidatures();
+
         entreprises.forEach(ent => {
           const distance = getDistance(latUser, lonUser, ent.lat, ent.lon);
           if (distance <= rayonKm) {
@@ -66,6 +73,15 @@ document.getElementById("traceCercle").addEventListener("click", () => {
             div.className = "aide-item";
             div.innerHTML = `<strong>${ent.nom}</strong><br>Secteur : ${ent.secteur}<br>Salariés : ${ent.salaries}<br>Distance : ${distance.toFixed(2)} km`;
             container.appendChild(div);
+
+            const marker = L.marker([ent.lat, ent.lon], {
+              icon: L.icon({
+                iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 32]
+              })
+            }).addTo(map).bindPopup(`<strong>${ent.nom}</strong><br>${ent.secteur}`);
+            markers.push(marker);
           }
         });
       }
@@ -91,6 +107,7 @@ form.addEventListener('submit', (e) => {
   localStorage.setItem('candidatures', JSON.stringify(candidatures));
   form.reset();
   afficherCandidatures();
+  afficherMarqueursCandidatures();
 });
 
 function afficherCandidatures() {
@@ -110,6 +127,28 @@ function afficherCandidatures() {
   });
 }
 
+function afficherMarqueursCandidatures() {
+  candidatures.forEach(c => {
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(c.adresse)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data[0]) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+
+          const marker = L.marker([lat, lon], {
+            icon: L.icon({
+              iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/green-dot.png',
+              iconSize: [32, 32],
+              iconAnchor: [16, 32]
+            })
+          }).addTo(map).bindPopup(`<strong>${c.entreprise}</strong><br>${c.statut}`);
+          markers.push(marker);
+        }
+      });
+  });
+}
+
 function modifier(i) {
   const c = candidatures[i];
   document.getElementById('entreprise').value = c.entreprise;
@@ -123,6 +162,7 @@ function supprimer(i) {
     candidatures.splice(i, 1);
     localStorage.setItem('candidatures', JSON.stringify(candidatures));
     afficherCandidatures();
+    afficherMarqueursCandidatures();
   }
 }
 
@@ -135,4 +175,5 @@ function chargerZoneDepuisLocalStorage() {
 }
 
 afficherCandidatures();
+afficherMarqueursCandidatures();
 chargerZoneDepuisLocalStorage();
