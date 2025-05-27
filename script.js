@@ -149,3 +149,41 @@ filtre.addEventListener('change', afficherCandidatures);
 
 afficherCandidatures();
 afficherMarqueurs();
+
+// Cercle autour du domicile
+const boutonCercle = document.getElementById('traceCercle');
+let cercleDomicile = null;
+
+boutonCercle.addEventListener('click', () => {
+  const adresse = document.getElementById('domicile').value.trim();
+  const rayonKm = parseFloat(document.getElementById('rayon').value);
+
+  if (!adresse || isNaN(rayonKm)) {
+    alert("Merci d'entrer une adresse et un rayon valide.");
+    return;
+  }
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data[0]) {
+        const { lat, lon } = data[0];
+
+        if (cercleDomicile) {
+          map.removeLayer(cercleDomicile);
+        }
+
+        cercleDomicile = L.circle([lat, lon], {
+          radius: rayonKm * 1000,
+          color: 'deepskyblue',
+          fillColor: 'skyblue',
+          fillOpacity: 0.2
+        }).addTo(map);
+
+        map.setView([lat, lon], 12);
+      } else {
+        alert("Adresse non trouvée.");
+      }
+    })
+    .catch(err => console.error("Erreur géocodage domicile :", err));
+});
