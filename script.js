@@ -16,6 +16,12 @@ function afficherCandidatures() {
   const statutFiltre = filtre.value;
 
   candidatures.forEach((c, index) => {
+    // Correction : si aucune date, en générer une maintenant
+    if (!c.date) {
+      c.date = new Date().toLocaleString();
+      enregistrer(); // mettre à jour localStorage
+    }
+
     if (statutFiltre === 'Tous' || c.statut === statutFiltre) {
       const ligne = document.createElement('tr');
       ligne.innerHTML = `
