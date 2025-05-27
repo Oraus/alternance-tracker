@@ -1,4 +1,3 @@
-/* Police claire, moderne, lisible */
 body {
   font-family: 'Segoe UI', Roboto, sans-serif;
   background-color: #0d1117;
@@ -31,7 +30,7 @@ form, .filtre {
   animation: fadeIn 1s ease-in-out;
 }
 
-form input, form select, .filtre select {
+form input, form select, .filtre select, #domicile, #rayon {
   flex: 1;
   padding: 10px;
   background-color: #0d1117;
@@ -40,7 +39,7 @@ form input, form select, .filtre select {
   border-radius: 6px;
 }
 
-form button, button.edit, button.delete {
+form button, button.edit, button.delete, #traceCercle {
   padding: 8px 14px;
   border-radius: 6px;
   font-weight: bold;
@@ -76,7 +75,15 @@ button.edit:hover {
   background-color: #e3b341;
 }
 
-/* Tableau */
+#traceCercle {
+  background-color: #0366d6;
+  color: white;
+}
+
+#traceCercle:hover {
+  background-color: #218bff;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -88,7 +95,7 @@ th, td {
   text-align: left;
   padding: 10px;
   border-bottom: 1px solid #30363d;
-  font-family: 'Courier New', monospace; /* monospace juste pour données */
+  font-family: 'Courier New', monospace;
   font-size: 14px;
 }
 
@@ -97,7 +104,6 @@ th {
   color: #c9d1d9;
 }
 
-/* Carte */
 #map {
   width: 100%;
   height: 400px;
@@ -107,7 +113,6 @@ th {
   animation: fadeIn 1s ease-in-out;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
