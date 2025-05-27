@@ -11,6 +11,7 @@
 <body>
   <div class="container">
     <h1>📋 Suivi de mes candidatures</h1>
+
     <form id="form">
       <input type="text" id="entreprise" placeholder="Nom de l'entreprise" required />
       <input type="text" id="adresse" placeholder="Adresse ou ville" required />
@@ -35,12 +36,6 @@
       </select>
     </div>
 
-    <div class="filtre">
-      <input type="text" id="domicile" placeholder="Mon adresse (ex: 15 rue Victor Hugo, Paris)" />
-      <input type="number" id="rayon" placeholder="Rayon en km" value="10" min="1" />
-      <button type="button" id="traceCercle">Tracer la zone</button>
-    </div>
-
     <h2>🔎 Mes candidatures</h2>
     <table id="tableau">
       <thead>
@@ -56,6 +51,16 @@
 
     <h2>📍 Carte des entreprises</h2>
     <div id="map"></div>
+
+    <section class="zone-domicile">
+      <h2>🏠 Zone autour de mon domicile</h2>
+      <p>Utilisez cette zone pour estimer un rayon de recherche autour de chez vous.</p>
+      <div class="filtre">
+        <input type="text" id="domicile" placeholder="Mon adresse (ex: 15 rue Victor Hugo, Paris)" />
+        <input type="number" id="rayon" placeholder="Rayon en km" value="10" min="1" />
+        <button type="button" id="traceCercle">Tracer la zone</button>
+      </div>
+    </section>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
