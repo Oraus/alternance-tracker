@@ -2,21 +2,35 @@ const form = document.getElementById('form');
 const tableau = document.querySelector('#tableau tbody');
 const filtre = document.getElementById('filtreStatut');
 const inputEntreprise = document.getElementById('entreprise');
+const inputAdresse = document.getElementById('adresse');
 const inputStatut = document.getElementById('statut');
 const inputEditIndex = document.getElementById('editIndex');
 const boutonSubmit = form.querySelector('button[type="submit"]');
-
-// Créer bouton Annuler
 const boutonAnnuler = document.createElement("button");
+
 boutonAnnuler.textContent = "Annuler";
 boutonAnnuler.type = "button";
 boutonAnnuler.style.display = "none";
 form.appendChild(boutonAnnuler);
 
 let candidatures = JSON.parse(localStorage.getItem('candidatures')) || [];
+let marqueurs = JSON.parse(localStorage.getItem('marqueurs')) || [];
+
+// Initialiser la carte
+const map = L.map('map').setView([48.8566, 2.3522], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+// Afficher les anciens marqueurs
+marqueurs.forEach(({ entreprise, lat, lon, adresse }) => {
+  L.marker([lat, lon]).addTo(map)
+    .bindPopup(`<strong>${entreprise}</strong><br>${adresse}`);
+});
 
 function enregistrer() {
   localStorage.setItem('candidatures', JSON.stringify(candidatures));
+  localStorage.setItem('marqueurs', JSON.stringify(marqueurs));
 }
 
 function afficherCandidatures() {
@@ -48,17 +62,18 @@ function afficherCandidatures() {
 form.addEventListener('submit', function (e) {
   e.preventDefault();
   const entreprise = inputEntreprise.value.trim();
+  const adresse = inputAdresse.value.trim();
   const statut = inputStatut.value;
   const now = new Date().toLocaleString();
 
-  if (entreprise) {
+  if (entreprise && adresse) {
     const index = inputEditIndex.value;
 
     if (index === "") {
-      candidatures.push({ entreprise, statut, date: now });
-      ajouterMarqueur(entreprise);
+      candidatures.push({ entreprise, adresse, statut, date: now });
+      geocoder(entreprise, adresse);
     } else {
-      candidatures[index] = { entreprise, statut, date: now };
+      candidatures[index] = { entreprise, adresse, statut, date: now };
     }
 
     enregistrer();
@@ -75,13 +90,16 @@ tableau.addEventListener('click', function (e) {
 
   if (e.target.classList.contains('delete')) {
     candidatures.splice(index, 1);
+    marqueurs.splice(index, 1);
     enregistrer();
     afficherCandidatures();
+    location.reload(); // recharge les marqueurs
   }
 
   if (e.target.classList.contains('edit')) {
     const c = candidatures[index];
     inputEntreprise.value = c.entreprise;
+    inputAdresse.value = c.adresse;
     inputStatut.value = c.statut;
     inputEditIndex.value = index;
     boutonSubmit.textContent = "Mettre à jour";
@@ -100,19 +118,8 @@ filtre.addEventListener('change', afficherCandidatures);
 
 afficherCandidatures();
 
-
-// =======================
-// Carte Leaflet
-// =======================
-
-const map = L.map('map').setView([48.8566, 2.3522], 11); // Paris par défaut
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors'
-}).addTo(map);
-
-function ajouterMarqueur(entreprise) {
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(entreprise)}`)
+function geocoder(entreprise, adresse) {
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`)
     .then(res => res.json())
     .then(data => {
       if (data && data[0]) {
@@ -121,9 +128,9 @@ function ajouterMarqueur(entreprise) {
           .bindPopup(`<strong>${entreprise}</strong><br>${display_name}`)
           .openPopup();
         map.setView([lat, lon], 13);
+        marqueurs.push({ entreprise, adresse: display_name, lat, lon });
+        enregistrer();
       }
     })
-    .catch(err => {
-      console.error("Erreur de géocodage :", err);
-    });
+    .catch(err => console.error("Erreur géocodage :", err));
 }
