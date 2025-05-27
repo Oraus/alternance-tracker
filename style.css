@@ -55,3 +55,12 @@ button.delete {
   padding: 5px 10px;
   cursor: pointer;
 }
+
+button.edit {
+  background: #ffaa00;
+  color: black;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+  cursor: pointer;
+}
