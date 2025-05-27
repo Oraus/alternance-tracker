@@ -14,29 +14,14 @@ boutonAnnuler.style.display = "none";
 form.appendChild(boutonAnnuler);
 
 let candidatures = JSON.parse(localStorage.getItem('candidatures')) || [];
-let marqueurs = JSON.parse(localStorage.getItem('marqueurs')) || [];
 
-const map = L.map('map').setView([48.8566, 2.3522], 11);
+const map = L.map('map').setView([48.8566, 2.3522], 6);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// 🔁 Marqueurs persistants
-function afficherMarqueurs() {
-  marqueurs.forEach(({ entreprise, lat, lon, adresse }) => {
-    L.marker([lat, lon]).addTo(map)
-      .bindPopup(`<strong>${entreprise}</strong><br>${adresse}`);
-  });
-
-  if (marqueurs.length > 0) {
-    const last = marqueurs[marqueurs.length - 1];
-    map.setView([last.lat, last.lon], 13);
-  }
-}
-
 function enregistrer() {
   localStorage.setItem('candidatures', JSON.stringify(candidatures));
-  localStorage.setItem('marqueurs', JSON.stringify(marqueurs));
 }
 
 function afficherCandidatures() {
@@ -65,24 +50,65 @@ function afficherCandidatures() {
   });
 }
 
+function afficherMarqueurs() {
+  candidatures.forEach(c => {
+    if (c.lat && c.lon) {
+      L.marker([c.lat, c.lon])
+        .addTo(map)
+        .bindPopup(`<strong>${c.entreprise}</strong><br>${c.adresse}`);
+    }
+  });
+}
+
+function geocoderEtAjouterMarqueur(index) {
+  const c = candidatures[index];
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(c.adresse)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data[0]) {
+        const { lat, lon, display_name } = data[0];
+        c.lat = parseFloat(lat);
+        c.lon = parseFloat(lon);
+        c.adresse = display_name;
+
+        L.marker([c.lat, c.lon])
+          .addTo(map)
+          .bindPopup(`<strong>${c.entreprise}</strong><br>${display_name}`)
+          .openPopup();
+
+        map.setView([c.lat, c.lon], 13);
+        enregistrer();
+      }
+    })
+    .catch(err => console.error("Erreur géocodage :", err));
+}
+
 form.addEventListener('submit', function (e) {
   e.preventDefault();
   const entreprise = inputEntreprise.value.trim();
   const adresse = inputAdresse.value.trim();
   const statut = inputStatut.value;
   const now = new Date().toLocaleString();
+  const index = inputEditIndex.value;
 
   if (entreprise && adresse) {
-    const index = inputEditIndex.value;
-
     if (index === "") {
       candidatures.push({ entreprise, adresse, statut, date: now });
-      geocoder(entreprise, adresse);
+      enregistrer();
+      geocoderEtAjouterMarqueur(candidatures.length - 1);
     } else {
-      candidatures[index] = { entreprise, adresse, statut, date: now };
+      const c = candidatures[index];
+      c.entreprise = entreprise;
+      c.adresse = adresse;
+      c.statut = statut;
+      c.date = now;
+      delete c.lat;
+      delete c.lon;
+      enregistrer();
+      geocoderEtAjouterMarqueur(index);
     }
 
-    enregistrer();
     afficherCandidatures();
     form.reset();
     inputEditIndex.value = "";
@@ -96,10 +122,9 @@ tableau.addEventListener('click', function (e) {
 
   if (e.target.classList.contains('delete')) {
     candidatures.splice(index, 1);
-    marqueurs.splice(index, 1);
     enregistrer();
     afficherCandidatures();
-    location.reload(); // recharge la carte avec les bons marqueurs
+    location.reload();
   }
 
   if (e.target.classList.contains('edit')) {
@@ -124,20 +149,3 @@ filtre.addEventListener('change', afficherCandidatures);
 
 afficherCandidatures();
 afficherMarqueurs();
-
-function geocoder(entreprise, adresse) {
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data && data[0]) {
-        const { lat, lon, display_name } = data[0];
-        L.marker([lat, lon]).addTo(map)
-          .bindPopup(`<strong>${entreprise}</strong><br>${display_name}`)
-          .openPopup();
-        map.setView([lat, lon], 13);
-        marqueurs.push({ entreprise, adresse: display_name, lat, lon });
-        enregistrer();
-      }
-    })
-    .catch(err => console.error("Erreur géocodage :", err));
-}
